@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-    "scripts": {
+  "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "clean": "rimraf dist",
@@ -13,11 +13,14 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
+    "@azure/storage-blob": "^12.27.0",
+    "mongodb": "^6.17.0",
     "mupdf": "^1.26.2",
+    "nanoid": "^5.1.5",
     "p-limit": "^6.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.x",
+    "@types/node": "^20.19.1",
     "rimraf": "^5.0.0",
     "typescript": "^4.0.0"
   },
