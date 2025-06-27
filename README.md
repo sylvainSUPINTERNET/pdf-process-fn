@@ -2,4 +2,8 @@
 
 ```` bash
 npm run start
+
+# or 
+func host start --cors *
+
 ````

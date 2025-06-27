@@ -3,11 +3,12 @@ import { MongoClient } from 'mongodb';
 import { isValidProjectEstimatePayload } from "../services/payload/checkProject.js";
 import { Project } from "../types/Project.js";
 import { prepareDataFromPayload, uploadAndSplit } from "../services/project/project.js";
-import { verifyToken } from "../services/auth/verifyToken.js";
+import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
 export async function createProject(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     
+
     // Auth
     let creator;
     if ( request.headers.get('Authorization') === null || request.headers.get('Authorization') === undefined ) {
@@ -19,7 +20,9 @@ export async function createProject(request: HttpRequest, context: InvocationCon
             }
         }
     }
-    const {sub, error}: {sub:string|null, error:boolean} = await verifyToken(request.headers.get('Authorization'), context);
+
+
+    const {sub, error}: {sub:string|null, error:boolean} = await verifyTokenMain(request.headers.get('Authorization'), context);
     if ( error ) {
         return {
             status: 401,
