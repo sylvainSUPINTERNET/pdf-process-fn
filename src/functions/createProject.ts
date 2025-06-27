@@ -8,14 +8,11 @@ import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
 async function notifyWebhook(sub:string, projectId:string, status: "COMPLETED" | "FAILED", context: InvocationContext): Promise<void> {
-    const webhookUrl = process.env.WebhookUrl as string;
-    const webhookSecret = process.env.WebhookSecret as string;
-
-    const resp = await fetch(`${webhookUrl}`, {
+    const resp = await fetch(`${process.env.WebhookUrl as string}`, {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json',
-            "X-Webhook-Secret": webhookSecret
+            "Content-Type": "application/json",
+            "X-Webhook-Secret": `${process.env.WebhookSecret as string}`
         },
         body: JSON.stringify({
             "user": sub,
