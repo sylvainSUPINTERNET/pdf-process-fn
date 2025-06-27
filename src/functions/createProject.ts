@@ -7,8 +7,8 @@ import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
 export async function createProject(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+    context.log(`Processing request to create project : ${context.invocationId}`);
     
-
     // Auth
     let creator;
     if ( request.headers.get('Authorization') === null || request.headers.get('Authorization') === undefined ) {
