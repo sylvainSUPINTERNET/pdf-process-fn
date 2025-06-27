@@ -6,6 +6,9 @@ import { prepareDataFromPayload, uploadAndSplit } from "../services/project/proj
 import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
+/**
+ * This function upload the PDF file as pages and create a new project
+ */
 export async function createProject(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Processing request to create project : ${context.invocationId}`);
     

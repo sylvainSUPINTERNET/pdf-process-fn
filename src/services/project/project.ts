@@ -69,7 +69,7 @@ export async function uploadAndSplit(project:Project, context:InvocationContext,
         limit(async () => {
           try {
             const blobClient = getBlobStorageClient()
-              .getContainerClient(`${process.env.blobPrefix as string}${project.projectId}`)
+              .getContainerClient(`${process.env.blobContainerName as string}/pdf/${project.projectId}`)
               .getBlockBlobClient(`page_${padPageNumber(pageNumber)}.pdf`); // use padding to keep native page order in azure storage ( based on ASCII )
 
             const resp = await blobClient.uploadData(data, {

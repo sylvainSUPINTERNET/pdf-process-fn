@@ -53,7 +53,7 @@ export async function getProjectThumbnails(projectId:string, continuationToken:s
           const buffer = await blobClient.downloadToBuffer();    
 
           // it's CPU bound, BUT mupdf is not thread-safe so we are fucked ( concurrency save nothing here ...)
-          const pdfDoc = mupdf.PDFDocument.openDocument(Buffer.from(buffer));
+          const pdfDoc = mupdf.PDFDocument.openDocument(Buffer.from(buffer)); // copy for safety
           const page = pdfDoc.loadPage(0);
           const pixmap = page.toPixmap(mupdf.Matrix.scale(dpi / 72, dpi / 72), mupdf.ColorSpace.DeviceRGB, false, true);
           const pngImage = pixmap.asPNG();

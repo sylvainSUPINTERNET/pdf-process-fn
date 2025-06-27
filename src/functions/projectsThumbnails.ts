@@ -2,6 +2,12 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { verifyTokenMain } from "../services/auth/verifyToken.js";
 import { getProjectThumbnails } from "../services/project/thumbnails.js";
 
+/**
+ * Call this function to get the list of project thumbnails ( with token for continuation ).
+ * @param request 
+ * @param context 
+ * @returns 
+ */
 export async function projectsThumbnails(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Processing project list thumbnails : ${context.invocationId}`);
 
