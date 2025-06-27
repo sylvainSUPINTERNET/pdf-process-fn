@@ -15,7 +15,7 @@ const DPI_FOR_WEB_IMAGE = 70;
  * @param context 
  * @returns 
  */
-export async function projectsImagePreview(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function projectsImage(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Project get image for selection preview : ${context.invocationId}`);
 
     // Auth
@@ -110,6 +110,6 @@ export async function projectsImagePreview(request: HttpRequest, context: Invoca
 app.http('projects-image-preview', {
     methods: ['GET'],
     authLevel: 'anonymous',
-    route: 'projects/{projectId}/preview/{pdfPageName}',
-    handler: projectsImagePreview
+    route: 'projects/{projectId}/image/{pdfPageName}',
+    handler: projectsImage
 });
