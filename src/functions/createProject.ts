@@ -6,6 +6,33 @@ import { prepareDataFromPayload, uploadAndSplit } from "../services/project/proj
 import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
+const WEBHOOK_HEADER_SECRET:string = "X-Webhook-Secret"
+
+async function notifyWebhook(sub:string, projectId:string, status: "COMPLETED" | "FAILED", context: InvocationContext): Promise<void> {
+
+    const webhookUrl = process.env.WebhookUrl as string;
+    const webhookSecret = process.env.WebhookSecret as string;
+
+    const resp = await fetch(`${webhookUrl}`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            [process.env.WEBHOOK_HEADER_SECRET as string]: webhookSecret
+        },
+        body: JSON.stringify({
+            "user": sub,
+            "projectId": projectId,
+            "status" : status
+        })
+    });
+
+    if ( !resp.ok ) {
+        const data = await resp.json();
+        context.error(`Error while notifying webhook for project ${projectId}: ${resp.status} - ${data}`);
+    }
+}
+
+
 /**
  * This function upload the PDF file as pages and create a new project
  */
@@ -23,7 +50,6 @@ export async function createProject(request: HttpRequest, context: InvocationCon
             }
         }
     }
-
 
     const {sub, error}: {sub:string|null, error:boolean} = await verifyTokenMain(request.headers.get('Authorization'), context);
     if ( error ) {
@@ -92,6 +118,7 @@ export async function createProject(request: HttpRequest, context: InvocationCon
         totalUploaded = totalPages;
         context.log(`Project PDF file processed with success for ${project.projectId}`);
     } catch ( e ) {
+        await notifyWebhook(creator, project.projectId, 'FAILED', context);
         context.error(`Error while processing PDF file for project ${project.projectId}: ${e}`);
         return {
             status: 500,
@@ -121,8 +148,12 @@ export async function createProject(request: HttpRequest, context: InvocationCon
             await client.close(true);
         } catch ( e ) {
             context.error(`Error while closing DB Client: ${e}`);
+            await notifyWebhook(creator, project.projectId, 'FAILED', context);
         }
     }
+
+
+    await notifyWebhook(creator, project.projectId, 'COMPLETED', context);
 
     return { 
         "status": 200,
