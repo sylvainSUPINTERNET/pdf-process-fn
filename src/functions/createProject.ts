@@ -6,10 +6,8 @@ import { prepareDataFromPayload, uploadAndSplit } from "../services/project/proj
 import { verifyTokenMain } from "../services/auth/verifyToken.js";
 
 
-const WEBHOOK_HEADER_SECRET:string = "X-Webhook-Secret"
 
 async function notifyWebhook(sub:string, projectId:string, status: "COMPLETED" | "FAILED", context: InvocationContext): Promise<void> {
-
     const webhookUrl = process.env.WebhookUrl as string;
     const webhookSecret = process.env.WebhookSecret as string;
 
@@ -17,7 +15,7 @@ async function notifyWebhook(sub:string, projectId:string, status: "COMPLETED" |
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            [process.env.WEBHOOK_HEADER_SECRET as string]: webhookSecret
+            "X-Webhook-Secret": webhookSecret
         },
         body: JSON.stringify({
             "user": sub,
