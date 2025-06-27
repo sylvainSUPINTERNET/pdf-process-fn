@@ -3,13 +3,37 @@ import { MongoClient } from 'mongodb';
 import { isValidProjectEstimatePayload } from "../services/payload/checkProject.js";
 import { Project } from "../types/Project.js";
 import { prepareDataFromPayload, uploadAndSplit } from "../services/project/project.js";
+import { verifyToken } from "../services/auth/verifyToken.js";
 
 
 export async function createProject(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     
-    // TODO => auth here
-    let creator = "sub";
+    // Auth
+    let creator;
+    if ( request.headers.get('Authorization') === null || request.headers.get('Authorization') === undefined ) {
+        context.error(`Authorization header is missing in the request.`);
+        return {
+            status: 401,
+            jsonBody: {
+                "message": "Authorization header is required"
+            }
+        }
+    }
+    const {sub, error}: {sub:string|null, error:boolean} = await verifyToken(request.headers.get('Authorization'), context);
+    if ( error ) {
+        return {
+            status: 401,
+            jsonBody: {
+                "message": "Invalid token or token expired. Please provide a valid token."
+            }
+        }
+    } else {
+        creator = sub;
+        context.log(`Request received from user: ${creator}`); 
+    } 
 
+
+    // Payload Data
     const body = await request.formData();
     if ( !body.get('files') || body.get('files') === null ) {
         context.error(`Files are required in the request body.`);
@@ -83,7 +107,7 @@ export async function createProject(request: HttpRequest, context: InvocationCon
     const collection = db.collection(process.env.ProjectCollectionName as string);
     const result = await collection.insertOne(project);
 
-    
+
     context.log(`Project PDF file uploaded and project saved with success : ${project.projectId}`);
 
     if ( client ) {
