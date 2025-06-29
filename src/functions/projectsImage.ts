@@ -5,12 +5,11 @@ import { getBlobStorageClient } from "../services/azure/azureStorageConfiguratio
 import mupdf from "mupdf";
 
 
-const DPI_FOR_AI_IMAGE = 220;
 const DPI_FOR_WEB_IMAGE = 70;
 
 /**
  * This function load a PDF page from the blob storage and return a preview image of the page.
- * DPI is query params must be 220 ( for AI ) or 70 ( for web display in select usecase page )
+ * DPI is query params must 70 ( for web display in select usecase page )
  * @param request 
  * @param context 
  * @returns 
@@ -47,11 +46,11 @@ export async function projectsImage(request: HttpRequest, context: InvocationCon
     const pdfPageName:string = request.params['pdfPageName']; // "page_00000021.pdf"
 
     const dpi:number = request.query.get('dpi') ? parseInt(request.query.get('dpi') as string) : DPI_FOR_WEB_IMAGE;
-    if ( dpi !== DPI_FOR_WEB_IMAGE && dpi !== DPI_FOR_AI_IMAGE ) {
+    if ( dpi !== DPI_FOR_WEB_IMAGE ) {
         return {
             status: 400,
             jsonBody: {
-                "message": `DPI must be ${DPI_FOR_WEB_IMAGE} or ${DPI_FOR_AI_IMAGE}, but got ${dpi}.`
+                "message": `DPI must be ${DPI_FOR_WEB_IMAGE}, but got ${dpi}.`
             },
             headers: {
                 'Content-Type': 'application/json'

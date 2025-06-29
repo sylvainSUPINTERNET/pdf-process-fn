@@ -42,7 +42,9 @@ export async function projectsThumbnails(request: HttpRequest, context: Invocati
     const dpiThumbnail = process.env.ThumbnailDpi as unknown as number || 30;
 
         try {
-            const {continuationToken:nextContinuationToken, images} : { continuationToken: string, images: {name: string, b64:string}[] } = await getProjectThumbnails(projectId, continuationToken, maxPageSize, dpiThumbnail, context)
+            const {continuationToken:nextContinuationToken, images} : { 
+                continuationToken: string, images: {fileName: string, b64:string, pageNumber:number, originalUrl:string }[]
+             } = await getProjectThumbnails(projectId, continuationToken, maxPageSize, dpiThumbnail, context)
             return {
                 status: 200,
                 jsonBody: {

@@ -6,7 +6,7 @@ import { getBlobStorageClient } from "../azure/azureStorageConfiguration.js";
 
 export async function getProjectThumbnails(projectId:string, continuationToken:string, maxPageSize:number, dpi:number, context: InvocationContext): Promise<{
     continuationToken: string,
-    images: {name: string, b64:string}[]
+    images: {fileName: string, b64:string, pageNumber:number, originalUrl: string}[]
 }> {
     if ( projectId === undefined || projectId === null || projectId === "" ) {
         throw new Error("Project ID is missing in the request parameters.");
@@ -39,7 +39,7 @@ export async function getProjectThumbnails(projectId:string, continuationToken:s
     let nextContinuationToken:string = page.value.continuationToken;
 
 
-    let images: {name: string, b64:string}[] = [];
+    let images: {fileName: string, b64:string, pageNumber: number, originalUrl: string}[] = [];
     if (page.value.segment.blobItems.length !== 0) {
     
       // Concurrency OK here ( download azure not CPU bound )
@@ -59,9 +59,13 @@ export async function getProjectThumbnails(projectId:string, continuationToken:s
           const pngImage = pixmap.asPNG();
           const b64 = Buffer.from(pngImage).toString('base64');
 
+          const pageNumber = parseInt(name.split("_")[1].split(".")[0],10)
+
           return {
-            name,
-            b64
+            fileName: name,
+            b64,
+            pageNumber,
+            originalUrl: blobClient.url
           }
 
         })
@@ -72,8 +76,8 @@ export async function getProjectThumbnails(projectId:string, continuationToken:s
     return {
       "continuationToken": nextContinuationToken, // "" means no more pages
       "images": images !== null ? images.sort((a, b) => {
-        const aPageNumber = parseInt(a.name.match(/page_(\d+)\.pdf/)![1]);
-        const bPageNumber = parseInt(b.name.match(/page_(\d+)\.pdf/)![1]);
+        const aPageNumber = parseInt(a.fileName.match(/page_(\d+)\.pdf/)![1]);
+        const bPageNumber = parseInt(b.fileName.match(/page_(\d+)\.pdf/)![1]);
         return aPageNumber - bPageNumber
       }) : []
     };
