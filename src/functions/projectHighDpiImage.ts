@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { verifyTokenMain } from "../services/auth/verifyToken.js";
-import { BlobServiceClient, BlobUploadCommonResponse, ContainerClient } from "@azure/storage-blob";
-import { generateImageSASToken, getBlobStorageClient } from "../services/azure/azureStorageConfiguration.js";
+import { BlobServiceClient } from "@azure/storage-blob";
+import { getBlobStorageClient } from "../services/azure/azureStorageConfiguration.js";
 import mupdf from "mupdf";
 
 
