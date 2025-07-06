@@ -16,6 +16,7 @@ npm run start
 
 Note that JWKS / Audience depends on where your token is from.
 
+
 ``` bash
 {
   "IsEncrypted": false,
@@ -28,8 +29,8 @@ Note that JWKS / Audience depends on where your token is from.
     "ThumbnailDpi": 10,
     "blobContainerName": "pdf-images-thumbnails",
     "AzureBlobStorageConnString":"",
-    "JwksAuth0": "https://onsite-takeoff-estimates.us.auth0.com/.well-known/jwks.json",
-    "AudienceAuth0": "https://api.onsitetakeoffestimates.com/api",
+    "JwksAuth0": "https://<well-known>/.well-known/jwks.json",
+    "AudienceAuth0": "https://<api_url>/api",
     "WebhookSecret": "",
     "WebhookUrl": ""
   },
